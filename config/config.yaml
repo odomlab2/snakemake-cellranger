@@ -1,0 +1,19 @@
+paths:
+  parent_dir: "/omics/groups/OE0538/internal/users/panten/projects/f1_multiOmics/snakemake_alignment/"
+  fastq_dirs:
+    - "/omics/odcf/project/OE0538/DO-0009/f1_b6_mcas/sequencing/10x_scRNA_sequencing/core/"
+    -  "/omics/odcf/project/OE0538/DO-0009/f1_mcas_b6/sequencing/10x_scRNA_sequencing/core/"
+references:
+  CAST_EiJ: "/omics/groups/OE0538/internal/users/panten/projects/genome_files/CellRangerRNA/B6_masked_cast/"
+  SPRET_EiJ: "/omics/groups/OE0538/internal/users/panten/projects/genome_files/CellRangerRNA/B6_masked_spret/"
+  C57BL6J: "/omics/groups/OE0538/internal/users/panten/projects/genome_files/CellRangerRNA/B6_masked_spret/"
+metadata:
+  mmus: data/mmus.csv
+rules:
+  allele_specific: False
+  wasp_filter_reads: False
+  realign_bam: False
+molgenis:
+  host: http://odcf-molgenis.dkfz.de
+  user: do0008
+  project: OE0538_DO0008
