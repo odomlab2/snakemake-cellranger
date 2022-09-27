@@ -1,8 +1,4 @@
 paths:
-  parent_dir: "/omics/groups/OE0538/internal/users/panten/projects/f1_multiOmics/snakemake_alignment/"
-  fastq_dirs:
-    - "/omics/odcf/project/OE0538/DO-0009/f1_b6_mcas/sequencing/10x_scRNA_sequencing/core/"
-    -  "/omics/odcf/project/OE0538/DO-0009/f1_mcas_b6/sequencing/10x_scRNA_sequencing/core/"
   output_dir: "/omics/groups/OE0538/internal/users/f844s/2022-bonemarrow/results"
   target_templates:
     linked_files: "linked_files/{0[individual]}/{0[sample_type]}"
