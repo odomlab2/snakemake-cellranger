@@ -12,6 +12,18 @@ references:
 metadata:
   raw:
    - "~/projects/bonemarrow-study/data/otp-export/2022-09-21/OE0538_DO-0008_mmus/data-files.csv"
+  identifying_fieldnames:
+    - SAMPLE_NAME
+    - Sample_Type
+    - Age
+    - fraction
+  # Define all columns from the metadata spreadsheet that
+  # will be included in the SingleCellExperiment / Seurat
+  # objects
+  single_cell_object_metadata_fields:
+      - SAMPLE_NAME
+      - Age
+# Enable / Disable rules and specifiy rule-specific parameters
 rules:
   cellranger_count:
     extra: ""  # set additional arguments for cellranger count
