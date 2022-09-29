@@ -12,7 +12,7 @@ references:
 metadata:
   raw:
    - "~/projects/bonemarrow-study/data/otp-export/2022-09-21/OE0538_DO-0008_mmus/data-files.csv"
-  identifying_fieldnames:
+  identifiers:
     - SAMPLE_NAME
     - Sample_Type
     - Age

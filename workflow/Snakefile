@@ -9,6 +9,11 @@ samples = Samples(config)
 REFERENCES = config["references"]
 OUTPUT_BASE_PATH = config["paths"]["output_dir"]
 
+def get_sample_string(identifiers):
+    return "_".join(["{" + label + "}" for label in identifiers])
+
+SAMPLE_WILDCARDS = get_sample_string(config['metadata']['identifiers'])
+
 print(samples.metadata)
 
 localrules: link_files, write_samples_spreadsheet, all  # local execution of non-demanding rules
@@ -90,5 +95,3 @@ rule cellranger_count:
         "{extra} "
         "--sample {wildcards.individual}_{wildcards.sample_type} "
         "> {log}"
-
-
