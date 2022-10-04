@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 from scripts.samples import Samples
 
+print("works")
+
 samples = Samples(config)
 
 REFERENCES = config["references"]
@@ -15,6 +17,7 @@ def get_sample_string(identifiers):
 SAMPLE_WILDCARDS = get_sample_string(config['metadata']['identifiers'])
 
 print(samples.metadata)
+print(SAMPLE_WILDCARDS)
 
 localrules: link_files, write_samples_spreadsheet, all  # local execution of non-demanding rules
 
@@ -79,7 +82,7 @@ rule cellranger_count:
     params:
         genome=REFERENCES["all_masked"],
         output_root_dir=lambda wildcards, output: Path(output[0]).parents[1],  # remove last 2 levels from output path
-        extra=config["rules"]["cellranger_count"]["extra"]
+        #extra=config["rules"]["cellranger_count"]["extra"]
     log:
         "logs/cellranger_count_{individual}_{sample_type}.log"
     threads: 16
@@ -92,6 +95,6 @@ rule cellranger_count:
         "--transcriptome {params.genome} "
         "--fastqs {input} "
         "--localcores={threads} "
-        "{extra} "
+        #"{extra} "
         "--sample {wildcards.individual}_{wildcards.sample_type} "
         "> {log}"
