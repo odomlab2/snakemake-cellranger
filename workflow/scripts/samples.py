@@ -2,7 +2,6 @@ import pandas as pd
 
 from snakemake.io import Wildcards
 
-
 class Samples:
     """
     Convert the OTP-exported metadata spreadsheet into a pandas.DataFrame
@@ -25,7 +24,7 @@ class Samples:
                "READ",
                "CELLRANGER_FASTQ_PATH",
                "Object_ID"]
-
+    
     # map to rename columns in the format of (old):(new)
     columns_map = {
         "Object_ID": "individual"
@@ -33,6 +32,7 @@ class Samples:
 
     def __init__(self, config):
         metadata_files = config["metadata"]["raw"]
+        identifiers = config["metadata"]["identifiers"] # for customization later
 
         self.output_base_dir = config["paths"]["output_dir"]
         self.target_templates = config["paths"]["target_templates"]

@@ -13,9 +13,10 @@ metadata:
   raw:
    - "~/Interspecies_BM_phd/data/metadata_full.csv"
   identifiers:
-    - Object_ID
-    - Age
-    - Fraction
+    - Species_ID
+    - Age_ID
+    - Fraction_ID
+    - Sample_NR
   # Define all columns from the metadata spreadsheet that
   # will be included in the SingleCellExperiment / Seurat
   # objects

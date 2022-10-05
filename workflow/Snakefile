@@ -14,16 +14,13 @@ def get_sample_string(identifiers):
 
 SAMPLE_WILDCARDS = get_sample_string(config['metadata']['identifiers'])
 
-#rint(samples.metadata)
-#print(SAMPLE_WILDCARDS)
+print(samples.metadata)
+print(SAMPLE_WILDCARDS)
 
 localrules: link_files, write_samples_spreadsheet, all  # local execution of non-demanding rules
 
 wildcard_constraints:
     individual="[A-z0-9_.-]+"
-
-print(samples.targets)
-
 
 rule all:
     input:
