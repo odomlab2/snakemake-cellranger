@@ -23,12 +23,12 @@ class Samples:
                "DATE_OF_DEATH",
                "LANE_NO",
                "READ",
-               "CELLRANGER_FASTQ_PATH"]
+               "CELLRANGER_FASTQ_PATH",
+               "Object_ID"]
 
     # map to rename columns in the format of (old):(new)
     columns_map = {
-        "PID": "individual",
-        "Sample Type": "sample_type",
+        "Object_ID": "individual"
     }
 
     def __init__(self, config):
@@ -63,17 +63,17 @@ class Samples:
         """Add column containing CellRanger compatible filename,
         i.e. in the format of
         [Sample Name]_S[Sample_Number]_L00[Lane Number]_[Read Type]_001.fastq.gz
-        Here, [Sample Name] consists of PID and Sample Type.
+        Here, [Sample Name] consists of Object_ID.
         See also: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/fastq-input
         """
 
-        grouped = df.groupby(["PID", "Sample Type", "LANE_NO", "READ"])
+        grouped = df.groupby(["Object_ID", "LANE_NO", "READ"])
         groups = []
         for name, group in grouped:
             group = group.sort_values("FastQ Path")  # import to have consistent sorting
             group["multi_sample_idx"] = range(1, len(group)+1)
             group["CELLRANGER_FASTQ_PATH"] = group.agg(
-                "{0[PID]}_{0[Sample Type]}_S{0[multi_sample_idx]}_L00{0[LANE_NO]}_R{0[READ]}_001.fastq.gz".format,
+                "{0[Object_ID]}_S{0[multi_sample_idx]}_L00{0[LANE_NO]}_R{0[READ]}_001.fastq.gz".format,
                 axis=1,
             )
             groups.append(group)
@@ -102,7 +102,7 @@ class Samples:
         :return param:
         """
 
-        _identifiers = ["individual", "sample_type"]
+        _identifiers = ["individual"]
 
         if wildcards:
             filters = dict((k, getattr(wildcards, k)) for k in _identifiers)

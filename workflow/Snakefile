@@ -4,8 +4,6 @@ import os
 from pathlib import Path
 from scripts.samples import Samples
 
-print("works")
-
 samples = Samples(config)
 
 REFERENCES = config["references"]
@@ -16,19 +14,20 @@ def get_sample_string(identifiers):
 
 SAMPLE_WILDCARDS = get_sample_string(config['metadata']['identifiers'])
 
-print(samples.metadata)
-print(SAMPLE_WILDCARDS)
+#rint(samples.metadata)
+#print(SAMPLE_WILDCARDS)
 
 localrules: link_files, write_samples_spreadsheet, all  # local execution of non-demanding rules
 
 wildcard_constraints:
-    sample_type="[A-z0-9_-]+",
-    individual="[A-z0-9_-]+"
+    individual="[A-z0-9_.-]+"
+
+print(samples.targets)
+
 
 rule all:
     input:
         samples.targets
-
 
 rule link_files:
     """Link files with filename pattern required for Cellranger
@@ -44,9 +43,9 @@ rule link_files:
 
         )
     output:
-        directory(f"{OUTPUT_BASE_PATH}/linked_files/{{individual}}/{{sample_type}}/")
+        directory(f"{OUTPUT_BASE_PATH}/linked_files/{{individual}}/")
     log:
-        "logs/link_files_{individual}_{sample_type}.log"
+        "logs/link_files_{individual}.log"
     run:
         log_fh  = open(log[0], "w")
         os.makedirs(output[0], exist_ok=True)
@@ -69,6 +68,8 @@ rule write_samples_spreadsheet:
             samples.metadata.to_csv(output[0], index=False)
             print("done.", file=log_fh)
 
+print("works")
+
 rule cellranger_count:
     """Run Cellranger count
     
@@ -78,23 +79,23 @@ rule cellranger_count:
     input:
         lambda wildcards: [os.path.abspath(path) for path in rules.link_files.output]
     output:
-        outs_dir=f"{OUTPUT_BASE_PATH}/cellranger_count/{{individual}}_{{sample_type}}/outs"
+        outs_dir=f"{OUTPUT_BASE_PATH}/cellranger_count/{{individual}}/outs"
     params:
         genome=REFERENCES["all_masked"],
         output_root_dir=lambda wildcards, output: Path(output[0]).parents[1],  # remove last 2 levels from output path
         #extra=config["rules"]["cellranger_count"]["extra"]
     log:
-        "logs/cellranger_count_{individual}_{sample_type}.log"
+        "logs/cellranger_count_{individual}.log"
     threads: 16
     envmodules:
         "cellranger/6.1.1",
     shell:
         "cd {params.output_root_dir}; "
         "cellranger count "
-        "--id {wildcards.individual}_{wildcards.sample_type} "  # letters, numbers, hyphens, and underscores
+        "--id {wildcards.individual} "  # letters, numbers, hyphens, and underscores
         "--transcriptome {params.genome} "
         "--fastqs {input} "
         "--localcores={threads} "
         #"{extra} "
-        "--sample {wildcards.individual}_{wildcards.sample_type} "
+        "--sample {wildcards.individual} "
         "> {log}"
