@@ -5,7 +5,7 @@ paths:
     cellranger_count: "cellranger_count/{0[individual]}/outs"
     samples_sheet: "metadata/samples.csv"
 references:
-  all_masked: "/omics/groups/OE0538/internal/users/f844s/2022-bonemarrow/data/masked_reference/GRCm38_masked_all_strains"
+  all_masked: "/omics/groups/OE0538/internal/users/f844s/2022-bonemarrow/data/masked_reference/GRCm38_masked_allStrains"
   CAST_EiJ: "/omics/groups/OE0538/internal/users/panten/projects/genome_files/CellRangerRNA/B6_masked_cast/"
   SPRET_EiJ: "/omics/groups/OE0538/internal/users/panten/projects/genome_files/CellRangerRNA/B6_masked_spret/"
   C57BL6J: "/omics/groups/OE0538/internal/users/panten/projects/genome_files/CellRangerRNA/B6_masked_spret/"
