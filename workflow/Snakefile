@@ -58,7 +58,7 @@ rule write_samples_spreadsheet:
     output:
         f"{OUTPUT_BASE_PATH}/{config['paths']['target_templates']['samples_sheet']}"
     log:
-        "logs/write_samples_spreadsheet.log"
+        f"{OUTPUT_BASE_PATH}/logs/write_samples_spreadsheet.log"
     run:
         with open(log[0], "w") as log_fh:
             print("storing samples metadata to {output[0]}", file=log_fh)
@@ -80,7 +80,7 @@ rule cellranger_count:
         output_root_dir=lambda wildcards, output: Path(output[0]).parents[1]  # remove last 2 levels from output path
         #extra=config["rules"]["cellranger_count"]["extra"]
     log:
-        "logs/cellranger_count_{individual}.log"
+        f"{OUTPUT_BASE_PATH}/logs/cellranger_count_{individual}.log"
     threads: 16
     envmodules:
         "cellranger/6.1.1",
