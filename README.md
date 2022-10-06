@@ -1,6 +1,10 @@
 # snakemake-cellranger
 
+
 This is the Cellranger workflow for the Odomlab. 
+
+![rule graph](docs/rulegraph.png)
+
 
 The pipeline and this documentation is work in progress and incomplete. Feel free to improve it by 
 [forking the repository](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks) and making 
