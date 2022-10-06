@@ -57,7 +57,7 @@ rule link_files:
 
 rule write_samples_spreadsheet:
     output:
-        f"{OUTPUT_BASE_PATH}/{config['paths']['target_templates']['samples_sheet']}"
+        f"{OUTPUT_BASE_PATH}/{config['paths']['target_files']['samples_sheet']}"
     log:
         "logs/write_samples_spreadsheet.log"
     run:
@@ -73,7 +73,7 @@ rule cellranger_count:
     """
 
     input:
-        rules.link_files.outputgit
+        rules.link_files.output
     output:
         outs_dir=f"{OUTPUT_BASE_PATH}/cellranger_count/{{individual}}_{{sample_type}}/outs"
     params:
