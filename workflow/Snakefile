@@ -73,7 +73,7 @@ rule cellranger_count:
     """
 
     input:
-        lambda wildcards: [os.path.abspath(path) for path in rules.link_files.output]
+        rules.link_files.outputgit
     output:
         outs_dir=f"{OUTPUT_BASE_PATH}/cellranger_count/{{individual}}_{{sample_type}}/outs"
     params:
@@ -92,6 +92,6 @@ rule cellranger_count:
         "--transcriptome {params.genome} "
         "--fastqs {input} "
         "--localcores={threads} "
-        "{extra} "
+        "{params.extra} "
         "--sample {wildcards.individual}_{wildcards.sample_type} "
         "> {log}"
