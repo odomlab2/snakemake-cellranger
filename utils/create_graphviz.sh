@@ -1,0 +1,2 @@
+snakemake --configfile config/config-example.yaml --rulegraph -n | grep -Pzo 'digraph(.*\n)*' |dot -Tpng > docs/rulegraph.png
+snakemake --configfile config/config-example.yaml --dag -n | grep -Pzo 'digraph(.*\n)*' |dot -Tpng > docs/dag.png
