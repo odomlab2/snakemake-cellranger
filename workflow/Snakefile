@@ -95,3 +95,13 @@ rule cellranger_count:
         #"{extra} "
         "--sample {wildcards.individual} "
         "> {log}"
+        
+# construct SCE objects from counts matrices found in ../alignment/output/
+rule construct_sce_objects:
+    input: 
+        output_cellranger = 
+        f"{OUTPUT_BASE_PATH}/cellranger_count/{{individual}}/outs/raw_feature_bc_matrix"
+    output:
+       sce_objects = f"{OUTPUT_BASE_PATH}/sce_objects/{{individual}}"
+    script:
+        "scripts/construct_sce_objects.R"
