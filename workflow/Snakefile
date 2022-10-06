@@ -42,7 +42,7 @@ rule link_files:
     output:
         directory(f"{OUTPUT_BASE_PATH}/linked_files/{{individual}}/")
     log:
-        "logs/link_files_{individual}.log"
+        f"{OUTPUT_BASE_PATH}/logs/link_files_{{individual}}.log"
     run:
         log_fh  = open(log[0], "w")
         os.makedirs(output[0], exist_ok=True)
@@ -80,7 +80,7 @@ rule cellranger_count:
         output_root_dir=lambda wildcards, output: Path(output[0]).parents[1]  # remove last 2 levels from output path
         #extra=config["rules"]["cellranger_count"]["extra"]
     log:
-        f"{OUTPUT_BASE_PATH}/logs/cellranger_count_{individual}.log"
+        f"{OUTPUT_BASE_PATH}/logs/cellranger_count_{{individual}}.log"
     threads: 16
     envmodules:
         "cellranger/6.1.1",
