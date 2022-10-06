@@ -1,5 +1,7 @@
 import pandas as pd
 
+#config['metadata']['identifiers']
+
 from snakemake.io import Wildcards
 
 class Samples:
@@ -29,6 +31,7 @@ class Samples:
     columns_map = {
         "Object_ID": "individual"
     }
+    
 
     def __init__(self, config):
         metadata_files = config["metadata"]["raw"]

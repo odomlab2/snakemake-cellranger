@@ -14,10 +14,11 @@ metadata:
   raw:
    - "~/snakemake-cellranger/data/metadata_full.csv"
   identifiers:
-    - Species_ID
+    #- Species_ID # not needed atm since I already have only one species
     - Age_ID
     - Fraction_ID
     - Sample_NR
+  #  - Object_ID
   # Define all columns from the metadata spreadsheet that
   # will be included in the SingleCellExperiment / Seurat
   # objects
