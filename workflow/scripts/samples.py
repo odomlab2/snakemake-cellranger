@@ -25,11 +25,11 @@ class Samples:
                "LANE_NO",
                "READ",
                "CELLRANGER_FASTQ_PATH",
-               "Object_ID"]
+               "Object_ID"] 
     
     # map to rename columns in the format of (old):(new)
     columns_map = {
-        "Object_ID": "individual"
+        "Object_ID": "individual" # Object_ID should uniquely identify each sample/object
     }
     
 
@@ -48,6 +48,7 @@ class Samples:
 
         self.metadata = self.select_columns(metadata_full)
         self.metadata = self.metadata.rename(self.columns_map, axis="columns")
+        
 
     def rename_date_of_birth(self,
                              row: pd.Series):

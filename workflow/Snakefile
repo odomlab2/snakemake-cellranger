@@ -21,9 +21,10 @@ localrules: link_files, write_samples_spreadsheet, all  # local execution of non
 wildcard_constraints: #individuals should not contain "." 
     #individual="[A-z0-9_-]+",
     #Species_ID="[A-z0-9_-]+",
-    Age_ID=IDENTIFIERS[0],
-    Fraction_ID="[A-z0-9_-]+",
-    Sample_NR="[A-z0-9-]+"
+    #Age_ID="[A-z0-9_-]+",
+    #Fraction_ID="[A-z0-9_-]+",
+    #Sample_NR="[A-z0-9-]+"
+    individual="[A-z0-9-]+"
 
 rule all:
     input:
@@ -44,7 +45,7 @@ rule link_files:
         )
     output:
     log:
-        f"{OUTPUT_BASE_PATH}/logs/link_files_{SAMPLE_WILDCARDS}.log"
+        f"{OUTPUT_BASE_PATH}/logs/link_files_{{individual}}.log"
     run:
         log_fh  = open(log[0], "w")
         os.makedirs(output[0], exist_ok=True)
@@ -76,13 +77,13 @@ rule cellranger_count:
     input:
         lambda wildcards: [os.path.abspath(path) for path in rules.link_files.output]
     output:
-        outs_dir=directory(f"{OUTPUT_BASE_PATH}/cellranger_count/{SAMPLE_WILDCARDS}/outs")
+        outs_dir=directory(f"{OUTPUT_BASE_PATH}/cellranger_count/{{individual}}/outs")
     params:
         genome=REFERENCES["all_masked"],
         output_root_dir=lambda wildcards, output: Path(output[0]).parents[1]  # remove last 2 levels from output path
         #extra=config["rules"]["cellranger_count"]["extra"]
     log:
-        f"{OUTPUT_BASE_PATH}/logs/cellranger_count_{SAMPLE_WILDCARDS}.log"
+        f"{OUTPUT_BASE_PATH}/logs/cellranger_count_{{individual}}.log"
     threads: 16
     envmodules:
         "cellranger/6.1.1",
@@ -102,9 +103,9 @@ rule cellranger_count:
 rule construct_sce_objects:
     input: 
         output_cellranger = 
-        f"{OUTPUT_BASE_PATH}/cellranger_count/{SAMPLE_WILDCARDS}/outs/raw_feature_bc_matrix"
+        f"{OUTPUT_BASE_PATH}/cellranger_count/{{individual}}/outs/raw_feature_bc_matrix"
     output:
-        sce_objects = f"{OUTPUT_BASE_PATH}/sce_objects/{SAMPLE_WILDCARDS}"
+        sce_objects = f"{OUTPUT_BASE_PATH}/sce_objects/{{individual}}"
     params:
         identifiers = IDENTIFIERS,
         metadata = METADATA_PATH

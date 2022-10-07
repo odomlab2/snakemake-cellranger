@@ -25,21 +25,22 @@ metadata <- read.csv(file = snakemake@params[["metadata"]],
 identifiers <- snakemake@params[["identifiers"]]
 print(identifiers)
 
-#wildcards_curr <- snakemake@wildcards[[identifiers[1]]]
-#print(wildcards_curr)
+wildcards_curr <- snakemake@wildcards[["individual"]]
+print(wildcards_curr)
 
-# construct a unique Object_ID from the identifiers and add to metadata if necessary
-for(i in snakemake@wildcards){
-  print(i)
-}
-print(class(c(snakemake@wildcards)))
 
-#object_id_curr <- paste(identifiers, collapse = "_")
-#print(object_id_curr)
+
 
 
 
 
 saveRDS(sce, file = snakemake@output[["sce_objects"]])
+
+
+
+
+metadata <- read.csv(file = "~/snakemake-cellranger/data/metadata_full.csv", head = TRUE,  sep = ",",     check.names=FALSE,   stringsAsFactors=FALSE,  as.is=TRUE, colClasses = "character")
+sce <- read10xCounts(samples = "/omics/groups/OE0538/internal/users/l012t/snakemake-cellranger/data/cellranger_count/mmus_old_str_2_0/outs/raw_feature_bc_matrix", col.names = TRUE,   type = "sparse" )
+
 
 
