@@ -1,7 +1,5 @@
 import pandas as pd
 
-#config['metadata']['identifiers']
-
 from snakemake.io import Wildcards
 
 class Samples:
