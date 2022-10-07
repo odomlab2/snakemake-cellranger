@@ -28,14 +28,16 @@ class Samples:
                "Object_ID"] 
     
     # map to rename columns in the format of (old):(new)
+    # Object_ID should uniquely identify each sample/object, it must already be contained in the metadata sheet 
+    # it must be identical to config metadata identifier
+    # I haven't found a way to directly lift it from config yet
     columns_map = {
-        "Object_ID": "individual" # Object_ID should uniquely identify each sample/object
+        "Object_ID": "individual" 
     }
     
 
     def __init__(self, config):
         metadata_files = config["metadata"]["raw"]
-        identifiers = config["metadata"]["identifiers"] # for customization later
 
         self.output_base_dir = config["paths"]["output_dir"]
         self.target_templates = config["paths"]["target_templates"]
