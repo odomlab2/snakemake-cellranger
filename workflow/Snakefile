@@ -6,24 +6,26 @@ from scripts.samples import Samples
 
 samples = Samples(config)
 
-METADATA_PATH = config["metadata"]["raw"]
+REFERENCES = config["references"]
 OUTPUT_BASE_PATH = config["paths"]["output_dir"]
 
-REFERENCES = config["references"]
-IDENTIFIER = config["metadata"]["identifier"]
+def get_sample_string(identifiers):
+    return "_".join(["{" + label + "}" for label in identifiers])
 
-#def get_sample_string(identifiers):
-#    return "_".join(["{" + label + "}" for label in identifiers])
-#SAMPLE_WILDCARDS = get_sample_string(IDENTIFIERS)
+SAMPLE_WILDCARDS = get_sample_string(config['metadata']['identifiers'])
+
+print(samples.metadata)
 
 localrules: link_files, write_samples_spreadsheet, all  # local execution of non-demanding rules
 
-wildcard_constraints: #should not contain ".", see rule cellranger_count
-    individual="[A-z0-9-]+"
+wildcard_constraints:
+    sample_type="[A-z0-9_-]+",
+    individual="[A-z0-9_-]+"
 
 rule all:
     input:
         samples.targets
+
 
 rule link_files:
     """Link files with filename pattern required for Cellranger
@@ -39,8 +41,9 @@ rule link_files:
 
         )
     output:
+        directory(f"{OUTPUT_BASE_PATH}/linked_files/{{individual}}/{{sample_type}}/")
     log:
-        f"{OUTPUT_BASE_PATH}/logs/link_files_{{individual}}.log"
+        "logs/link_files_{individual}_{sample_type}.log"
     run:
         log_fh  = open(log[0], "w")
         os.makedirs(output[0], exist_ok=True)
@@ -54,9 +57,9 @@ rule link_files:
 
 rule write_samples_spreadsheet:
     output:
-        f"{OUTPUT_BASE_PATH}/{config['paths']['target_templates']['samples_sheet']}"
+        f"{OUTPUT_BASE_PATH}/{config['paths']['target_files']['samples_sheet']}"
     log:
-        f"{OUTPUT_BASE_PATH}/logs/write_samples_spreadsheet.log"
+        "logs/write_samples_spreadsheet.log"
     run:
         with open(log[0], "w") as log_fh:
             print("storing samples metadata to {output[0]}", file=log_fh)
@@ -70,40 +73,25 @@ rule cellranger_count:
     """
 
     input:
-        lambda wildcards: [os.path.abspath(path) for path in rules.link_files.output]
+        rules.link_files.output
     output:
-        outs_dir=directory(f"{OUTPUT_BASE_PATH}/cellranger_count/{{individual}}/outs")
+        outs_dir=f"{OUTPUT_BASE_PATH}/cellranger_count/{{individual}}_{{sample_type}}/outs"
     params:
         genome=REFERENCES["all_masked"],
-        output_root_dir=lambda wildcards, output: Path(output[0]).parents[1]  # remove last 2 levels from output path
-        #extra=config["rules"]["cellranger_count"]["extra"]
+        output_root_dir=lambda wildcards, output: Path(output[0]).parents[1],  # remove last 2 levels from output path
+        extra=config["rules"]["cellranger_count"]["extra"]
     log:
-        f"{OUTPUT_BASE_PATH}/logs/cellranger_count_{{individual}}.log"
+        "logs/cellranger_count_{individual}_{sample_type}.log"
     threads: 16
     envmodules:
         "cellranger/6.1.1",
     shell:
         "cd {params.output_root_dir}; "
-        "pwd;"
         "cellranger count "
-        "--id {wildcards.individual} "  # letters, numbers, hyphens, and underscores
+        "--id {wildcards.individual}_{wildcards.sample_type} "  # letters, numbers, hyphens, and underscores
         "--transcriptome {params.genome} "
         "--fastqs {input} "
         "--localcores={threads} "
-        #"{extra} "
-        "--sample {wildcards.individual} "
+        "{params.extra} "
+        "--sample {wildcards.individual}_{wildcards.sample_type} "
         "> {log}"
-
-# construct SCE objects from counts matrices found in ../alignment/output/
-rule construct_sce_objects:
-    input: 
-        output_cellranger = 
-        f"{OUTPUT_BASE_PATH}/cellranger_count/{{individual}}/outs/raw_feature_bc_matrix"
-    output:
-        sce_objects = f"{OUTPUT_BASE_PATH}/sce_objects/{{individual}}"
-    params:
-        identifier = IDENTIFIER,
-        metadata = METADATA_PATH,
-        single_cell_object_metadata_fields = config["metadata"]["single_cell_object_metadata_fields"]
-    script:
-        "scripts/construct_sce_objects.R"

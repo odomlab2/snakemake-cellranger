@@ -18,13 +18,13 @@ jobs:
         with:
           directory: '.test'
           snakefile: 'workflow/Snakefile'
-          args: '--lint --configfile config/config-test.yaml'
+          args: '--lint --configfile config/config-example.yaml'
       - name: Testing
         uses: snakemake/snakemake-github-action@v1
         with:
           directory: '.test'
           snakefile: 'workflow/Snakefile'
-          args: '--cores 1 --use-conda  --configfile config/config-test.yaml --conda-cleanup-pkgs cache'
+          args: '--cores 1 --use-conda  --configfile config/config-example.yaml --conda-cleanup-pkgs cache'
           stagein: '' # additional preliminary commands to run (can be multiline)
       - name: Create container file
         uses: snakemake/snakemake-github-action@v1
