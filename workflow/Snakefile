@@ -41,6 +41,7 @@ rule link_files:
 
         )
     output:
+       directory(f"{OUTPUT_BASE_PATH}/linked_files/{{individual}}")
     log:
         f"{OUTPUT_BASE_PATH}/logs/link_files_{{individual}}.log"
     run:
@@ -92,13 +93,10 @@ rule cellranger_count:
         "--transcriptome {params.genome} "
         "--fastqs {input} "
         "--localcores={threads} "
-<<<<<<< HEAD
         #"{extra} "
         "--sample {wildcards.individual} "
-=======
-        "{params.extra} "
-        "--sample {wildcards.individual}_{wildcards.sample_type} "
->>>>>>> cf05a99b38eb3233b3533b0392a99aa750ce3fa0
+        #"{params.extra} "
+        "--sample {wildcards.individual} "
         "> {log}"
 
 # construct SCE objects from counts matrices found in ../alignment/output/
