@@ -87,14 +87,12 @@ rule cellranger_count:
         "cellranger/6.1.1",
     shell:
         "cd {params.output_root_dir}; "
-        "pwd;"
+        "pwd; "
         "cellranger count "
         "--id {wildcards.individual} "  # letters, numbers, hyphens, and underscores
         "--transcriptome {params.genome} "
         "--fastqs {input} "
         "--localcores={threads} "
-        #"{extra} "
-        "--sample {wildcards.individual} "
         #"{params.extra} "
         "--sample {wildcards.individual} "
         "> {log}"

@@ -67,7 +67,9 @@ class Samples:
         """Add column containing CellRanger compatible filename,
         i.e. in the format of
         [Sample Name]_S[Sample_Number]_L00[Lane Number]_[Read Type]_001.fastq.gz
+        
         Here, [Sample Name] consists of Object_ID.
+        
         See also: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/fastq-input
         """
 
@@ -136,3 +138,7 @@ class Samples:
 
         targets = list(map(lambda x: self.metadata.agg(x.format, axis=1).drop_duplicates().to_list(), target_templates.values()))
         return targets
+      
+      
+      
+#grouped = metadata_subset.groupby(["PID", "Sample Type"])["FastQ Path"].apply(list)
