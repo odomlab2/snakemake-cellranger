@@ -2,6 +2,9 @@ import pandas as pd
 
 from snakemake.io import Wildcards
 
+# list identifiers identically to config identifiers and in same order
+IDENTIFIERS = ["Species_ID", "Age_ID", "Fraction_ID", "Sample_NR"] # find a way to lift directly from config
+
 class Samples:
     """
     Convert the OTP-exported metadata spreadsheet into a pandas.DataFrame
@@ -23,15 +26,16 @@ class Samples:
                "LANE_NO",
                "READ",
                "CELLRANGER_FASTQ_PATH",
-               "Object_ID"] 
+               "individual"] # include individual which is later generated
     
+    columns = columns + IDENTIFIERS
     # map to rename columns in the format of (old):(new)
     # Object_ID should uniquely identify each sample/object, it must already be contained in the metadata sheet 
     # it must be identical to config metadata identifier
     # I haven't found a way to directly lift it from config yet
-    columns_map = {
-        "Object_ID": "individual" 
-    }
+    #columns_map = {
+    #    "Object_ID": "individual" 
+    #}
     
 
     def __init__(self, config):
@@ -42,13 +46,31 @@ class Samples:
 
         metadata_full = pd.concat((pd.read_csv(f) for f in metadata_files), ignore_index=True)
 
+        """Make "individual" column
+        
+        A single identifier col is effectively renamed to "individual" but 
+        entries from multiple identifier cols are concatenated to "individual".
+        
+        Entries in the "individual" col are used as wildcards.
+        
+        For metadata_full it is used for downstream functions (?).
+        
+        This may cause a warning that I still have to take care of but that doesn't seem critical.
+        """       
+        if not "individual" in metadata_full.columns: 
+            print('establishing "individual" column') 
+            for i in IDENTIFIERS:
+                if i == IDENTIFIERS[0]:
+                    metadata_full["individual"] = ""
+                    metadata_full["individual"] = metadata_full["individual"] + metadata_full[i].map(str)
+                else: 
+                    metadata_full["individual"] = metadata_full["individual"] + '_' + metadata_full[i].map(str)
+      
         metadata_full["DATE_OF_BIRTH"] = metadata_full.apply(self.rename_date_of_birth, axis=1)
-
+        
         metadata_full = self.get_cellranger_filename(metadata_full)
 
         self.metadata = self.select_columns(metadata_full)
-        self.metadata = self.metadata.rename(self.columns_map, axis="columns")
-        
 
     def rename_date_of_birth(self,
                              row: pd.Series):
@@ -68,18 +90,18 @@ class Samples:
         i.e. in the format of
         [Sample Name]_S[Sample_Number]_L00[Lane Number]_[Read Type]_001.fastq.gz
         
-        Here, [Sample Name] consists of Object_ID.
+        Here, [Sample Name] consists of "individual".
         
         See also: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/fastq-input
         """
 
-        grouped = df.groupby(["Object_ID", "LANE_NO", "READ"])
+        grouped = df.groupby(["individual", "LANE_NO", "READ"])
         groups = []
         for name, group in grouped:
             group = group.sort_values("FastQ Path")  # import to have consistent sorting
             group["multi_sample_idx"] = range(1, len(group)+1)
             group["CELLRANGER_FASTQ_PATH"] = group.agg(
-                "{0[Object_ID]}_S{0[multi_sample_idx]}_L00{0[LANE_NO]}_R{0[READ]}_001.fastq.gz".format,
+                "{0[individual]}_S{0[multi_sample_idx]}_L00{0[LANE_NO]}_R{0[READ]}_001.fastq.gz".format,
                 axis=1,
             )
             groups.append(group)

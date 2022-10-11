@@ -10,18 +10,15 @@ METADATA_PATH = config["metadata"]["raw"]
 OUTPUT_BASE_PATH = config["paths"]["output_dir"]
 
 REFERENCES = config["references"]
-IDENTIFIER = config["metadata"]["identifier"]
-
-#def get_sample_string(identifiers):
-#    return "_".join(["{" + label + "}" for label in identifiers])
-#SAMPLE_WILDCARDS = get_sample_string(IDENTIFIERS)
+IDENTIFIERS = config["metadata"]["identifiers"]
 
 print(samples.metadata)
+print(samples.metadata["individual"].unique())
 
-localrules: link_files, write_samples_spreadsheet, all  # local execution of non-demanding rules
+localrules: link_files, write_samples_spreadsheet, all, construct_sce_objects  # local execution of non-demanding rules
 
 wildcard_constraints: #should not contain ".", see rule cellranger_count
-    individual="[A-z0-9-]+"
+    individual="[A-z0-9_-]+" 
 
 rule all:
     input:
@@ -100,13 +97,12 @@ rule cellranger_count:
 # construct SCE objects from counts matrices found in ../alignment/output/
 rule construct_sce_objects:
     input: 
-        output_cellranger = 
-        f"{OUTPUT_BASE_PATH}/cellranger_count/{{individual}}/outs/"
+        output_cellranger = rules.cellranger_count.output
     output:
         sce_objects = f"{OUTPUT_BASE_PATH}/sce_objects/{{individual}}"
     params:
-        identifier = IDENTIFIER,
-        metadata = METADATA_PATH,
+        identifiers = IDENTIFIERS,
+        metadata = METADATA_PATH, # could be replaced with samples.metadata if R script is changed as well
         single_cell_object_metadata_fields = config["metadata"]["single_cell_object_metadata_fields"]
     script:
         "scripts/construct_sce_objects.R"

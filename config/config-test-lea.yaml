@@ -1,5 +1,5 @@
 paths:
-  output_dir: "/omics/groups/OE0538/internal/users/l012t/snakemake-cellranger/test5"
+  output_dir: "/omics/groups/OE0538/internal/users/l012t/snakemake-cellranger/test10"
   target_templates:
     linked_files: "linked_files/{0[individual]}"
     cellranger_count: "cellranger_count/{0[individual]}/outs"
@@ -15,16 +15,20 @@ references:
 metadata:
   raw:
    - "/omics/groups/OE0538/internal/users/l012t/snakemake-cellranger/data/metadata_full.csv"
-  identifier:
-    #- Species_ID # not needed atm since I already have only one species
-    #- Age_ID
-    #- Fraction_ID 
-    #- Sample_NR
-     - Object_ID
+  identifiers: 
+  # Define column name(s) used to define a sample (in correct order)
+  # entries from multiple cols are concatenated into one sample-specific name
+  # in the format of {Species_ID}_{Age_ID}_{Fraction_ID}_{Sample_NR}
+    - Species_ID # col names I manually added to metadata sheet beforehand
+    - Age_ID
+    - Fraction_ID 
+    - Sample_NR
+    #- Objects_ID 
+    #- PID # col name automatically included in OTP metadata sheets
+  single_cell_object_metadata_fields:
   # Define all columns from the metadata spreadsheet that
   # will be included in the SingleCellExperiment / Seurat
   # objects
-  single_cell_object_metadata_fields:
       - Object_ID
       - Mouse_ID
       - Species_ID
