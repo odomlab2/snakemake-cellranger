@@ -6,7 +6,9 @@ library(DropletUtils, quietly = TRUE)
 # https://anaconda.org/bioconda/bioconductor-dropletutils
 
 # construct SCE object from raw cellranger output
-sce <- read10xCounts(samples = snakemake@input[["output_cellranger"]], 
+print(paste0(snakemake@input[["output_cellranger"]], "raw_feature_bc_matrix"))
+
+sce <- read10xCounts(samples = paste0(snakemake@input[["output_cellranger"]], "/raw_feature_bc_matrix"), 
                      col.names = TRUE, 
                      type = "sparse" )
 

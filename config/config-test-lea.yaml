@@ -1,9 +1,8 @@
 paths:
-  output_dir: "/omics/groups/OE0538/internal/users/l012t/snakemake-cellranger/data"
+  output_dir: "/omics/groups/OE0538/internal/users/l012t/snakemake-cellranger/test5"
   target_templates:
     linked_files: "linked_files/{0[individual]}"
     cellranger_count: "cellranger_count/{0[individual]}/outs"
-    samples_sheet: "metadata/samples.csv"
     construct_sce_objects: "sce_objects/{0[individual]}"
   # define specific target files
   target_files:

@@ -101,7 +101,7 @@ rule cellranger_count:
 rule construct_sce_objects:
     input: 
         output_cellranger = 
-        f"{OUTPUT_BASE_PATH}/cellranger_count/{{individual}}/outs/raw_feature_bc_matrix"
+        f"{OUTPUT_BASE_PATH}/cellranger_count/{{individual}}/outs/"
     output:
         sce_objects = f"{OUTPUT_BASE_PATH}/sce_objects/{{individual}}"
     params:
