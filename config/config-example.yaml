@@ -22,16 +22,15 @@ metadata:
     - ""
   # Define the column names used to define a sample
   identifiers:
-    - SAMPLE_NAME
+    - PID
     - Sample_Type
-    - Age
-    - fraction
   # Define all columns from the metadata spreadsheet that
   # will be included in the SingleCellExperiment / Seurat
   # objects
   single_cell_object_metadata_fields:
-      - SAMPLE_NAME
-      - Age
+      - PID
+      - Sample_Type
+      - individual
 # Enable / Disable rules and specifiy rule-specific parameters
 rules:
   cellranger_count:

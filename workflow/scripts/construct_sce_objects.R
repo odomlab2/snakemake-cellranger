@@ -23,7 +23,7 @@ metadata <- read.csv(file = snakemake@params[["metadata"]],
                      as.is=TRUE, 
                      colClasses = "character")
 
-wildcard_curr <- snakemake@wildcards[["individual"]] # currently loaded sample 
+wildcard_curr <- snakemake@wildcards[["individual"]] # currently loaded individual sample 
 IDENTIFIERS <- snakemake@params[["identifiers"]] 
 
 # if necessary concatenate identifiers again to obtain all possible wildcards 
@@ -35,8 +35,7 @@ if(! "individual" %in% colnames(metadata_curr)){
 }
 
 # subset data as specified by wildcard and single_cell_object_metadata_fields
-metadata_curr <- metadata_curr[
-  which(metadata_curr$individual == wildcard_curr),]
+metadata_curr <- metadata_curr[which(metadata_curr$individual == wildcard_curr),]
 cols_add <- snakemake@params[["single_cell_object_metadata_fields"]]
 metadata_curr <- metadata_curr[,colnames(metadata_curr) %in% cols_add]
 

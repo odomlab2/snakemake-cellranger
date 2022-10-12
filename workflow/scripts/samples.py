@@ -48,7 +48,7 @@ class Samples:
 
         """Make "individual" column
         
-        A single identifier col is effectively renamed to "individual" but 
+        A single identifier col is copied and renamed to "individual" but 
         entries from multiple identifier cols are concatenated to "individual".
         
         Entries in the "individual" col are used as wildcards.
@@ -61,8 +61,7 @@ class Samples:
             print('establishing "individual" column') 
             for i in IDENTIFIERS:
                 if i == IDENTIFIERS[0]:
-                    metadata_full["individual"] = ""
-                    metadata_full["individual"] = metadata_full["individual"] + metadata_full[i].map(str)
+                    metadata_full["individual"] = metadata_full[i].map(str)
                 else: 
                     metadata_full["individual"] = metadata_full["individual"] + '_' + metadata_full[i].map(str)
       

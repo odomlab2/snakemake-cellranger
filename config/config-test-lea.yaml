@@ -1,5 +1,5 @@
 paths:
-  output_dir: "/omics/groups/OE0538/internal/users/l012t/snakemake-cellranger/test10"
+  output_dir: "/omics/groups/OE0538/internal/users/l012t/snakemake-cellranger/data"
   target_templates:
     linked_files: "linked_files/{0[individual]}"
     cellranger_count: "cellranger_count/{0[individual]}/outs"
@@ -25,11 +25,12 @@ metadata:
     - Sample_NR
     #- Objects_ID 
     #- PID # col name automatically included in OTP metadata sheets
+    #- Sample Type # col name automatically included in OTP metadata sheets
   single_cell_object_metadata_fields:
   # Define all columns from the metadata spreadsheet that
   # will be included in the SingleCellExperiment / Seurat
   # objects
-      - Object_ID
+      - Object_ID # colnames I manually added to metadata 
       - Mouse_ID
       - Species_ID
       - Age
@@ -44,6 +45,7 @@ metadata:
       - Batch_sequencing
       - Date_collected
       - Discard
+      - individual
       - PID
 # Enable / Disable rules and specifiy rule-specific parameters
 rules:
