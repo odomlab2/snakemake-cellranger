@@ -1,9 +1,9 @@
 paths:
-  output_dir: "/omics/groups/OE0538/internal/users/l012t/snakemake-cellranger/data"
+  output_dir: "/omics/odcf/analysis/OE0538_projects/DO-0008/test"
   target_templates:
-    linked_files: "linked_files/{0[individual]}"
-    cellranger_count: "cellranger_count/{0[individual]}/outs"
-    construct_sce_objects: "sce_objects/{0[individual]}"
+    linked_files: "cellranger/linked_files/{0[Species_ID]}/{0[individual]}"
+    cellranger_count: "cellranger/cellranger_count/{0[Species_ID]}/{0[individual]}/outs"
+    construct_sce_objects: "sce_objects/01_cellranger_output/{0[Species_ID]}/sce_{0[individual]}-01"
   # define specific target files
   target_files:
     samples_sheet: "metadata.csv"
@@ -14,7 +14,7 @@ references:
   #C57BL6J: "/omics/groups/OE0538/internal/users/panten/projects/genome_files/CellRangerRNA/B6_masked_spret/"
 metadata:
   raw:
-   - "/omics/groups/OE0538/internal/users/l012t/snakemake-cellranger/data/metadata_full.csv"
+   - "/omics/odcf/analysis/OE0538_projects/DO-0008/metadata/OE0538_DO-0008_metadata_combined.csv"
   identifiers: 
   # Define column name(s) used to define a sample (in correct order)
   # entries from multiple cols are concatenated into one sample-specific name
@@ -44,7 +44,7 @@ metadata:
       - Batch_exp_day
       - Batch_sequencing
       - Date_collected
-      - Discard
+      - Keep_sample
       - individual
       - PID
 # Enable / Disable rules and specifiy rule-specific parameters

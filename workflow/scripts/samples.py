@@ -129,7 +129,7 @@ class Samples:
         :return param:
         """
 
-        _identifiers = ["individual"]
+        _identifiers = ["individual", "Species_ID"]
 
         if wildcards:
             filters = dict((k, getattr(wildcards, k)) for k in _identifiers)
