@@ -3,7 +3,7 @@ import pandas as pd
 from snakemake.io import Wildcards
 
 # list identifiers identically to config identifiers and in same order
-IDENTIFIERS = ["Species_ID", "Age_ID", "Fraction_ID", "Sample_NR"] # find a way to lift directly from config
+#IDENTIFIERS = ["Species_ID", "Age_ID", "Fraction_ID"] # find a way to lift directly from config
 
 class Samples:
     """
@@ -27,18 +27,14 @@ class Samples:
                "READ",
                "CELLRANGER_FASTQ_PATH",
                "individual"] # include individual which is later generated
-    
-    columns = columns + IDENTIFIERS
-    # map to rename columns in the format of (old):(new)
-    # Object_ID should uniquely identify each sample/object, it must already be contained in the metadata sheet 
-    # it must be identical to config metadata identifier
-    # I haven't found a way to directly lift it from config yet
-    #columns_map = {
-    #    "Object_ID": "individual" 
-    #}
-    
-
+    #print(IDENTIFIERS)
+    #print(columns)
+    #columns = columns + IDENTIFIERS 
+    #print(columns)
+    #columns = None
+               
     def __init__(self, config):
+        IDENTIFIERS = config["metadata"]["identifiers"]
         metadata_files = config["metadata"]["raw"]
 
         self.output_base_dir = config["paths"]["output_dir"]
@@ -69,7 +65,7 @@ class Samples:
         
         metadata_full = self.get_cellranger_filename(metadata_full)
 
-        self.metadata = self.select_columns(metadata_full)
+        self.metadata = self.select_columns(metadata_full, identifiers = IDENTIFIERS)
 
     def rename_date_of_birth(self,
                              row: pd.Series):
@@ -109,13 +105,15 @@ class Samples:
 
     def select_columns(self,
                        df: pd.DataFrame,
-                       columns: list = None):
+                       columns: list = None,
+                       identifiers: str = None):
         """Select/Subset columns from DataFrame to reduce
         DataFrame dimensions. """
-        if not columns:
-            columns = self.columns
-        return df[columns]
 
+        if not columns:
+            columns = self.columns + identifiers
+        return df[columns]
+            
     @staticmethod
     def filter_by_wildcards(
             wildcards: Wildcards,

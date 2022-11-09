@@ -1,7 +1,6 @@
 #-------------------------------------------------------------------------------
 
 library(tidyverse, quietly = TRUE) 
-#library(SummarizedExperiment, quietly = TRUE) 
 library(DropletUtils, quietly = TRUE) 
 
 # construct SCE object from raw cellranger output
