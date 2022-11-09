@@ -1,11 +1,8 @@
 #-------------------------------------------------------------------------------
 
-library(DropletUtils, quietly = TRUE) 
 library(tidyverse, quietly = TRUE) 
-# r and library modules must be installed in snakemake conda environment
-# https://anaconda.org/conda-forge/r-base
-# https://anaconda.org/bioconda/bioconductor-dropletutils
-# https://anaconda.org/r/r-tidyverse
+#library(SummarizedExperiment, quietly = TRUE) 
+library(DropletUtils, quietly = TRUE) 
 
 # construct SCE object from raw cellranger output
 print(paste0(snakemake@input[["output_cellranger"]], "/raw_feature_bc_matrix"))
@@ -23,7 +20,7 @@ metadata <- read.csv(file = snakemake@params[["metadata"]],
                      as.is=TRUE, 
                      colClasses = "character")
 
-wildcard_curr <- snakemake@wildcards[["individual"]] # currently loaded individual sample 
+individual_curr <- snakemake@wildcards[["individual"]] # currently loaded individual sample 
 IDENTIFIERS <- snakemake@params[["identifiers"]] 
 
 # if necessary concatenate identifiers again to obtain all possible wildcards 
@@ -35,7 +32,7 @@ if(! "individual" %in% colnames(metadata_curr)){
 }
 
 # subset data as specified by wildcard and single_cell_object_metadata_fields
-metadata_curr <- metadata_curr[which(metadata_curr$individual == wildcard_curr),]
+metadata_curr <- metadata_curr[which(metadata_curr$individual == individual_curr),]
 cols_add <- snakemake@params[["single_cell_object_metadata_fields"]]
 metadata_curr <- metadata_curr[,colnames(metadata_curr) %in% cols_add]
 
@@ -44,4 +41,5 @@ for(i in colnames(metadata_curr)){
   colData(sce)[i] <- rep(metadata_curr[1,i], ncol(sce))
 }
 
+print(sce)
 saveRDS(sce, file = snakemake@output[["sce_objects"]])

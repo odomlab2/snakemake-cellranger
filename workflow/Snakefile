@@ -100,12 +100,13 @@ rule construct_sce_objects:
     input: 
         output_cellranger = rules.cellranger_count.output
     output:
-        sce_objects = f"{OUTPUT_BASE_PATH}/sce_objects/01_cellranger_output/{{Species_ID}}/sce_{{individual}}-01"
+        sce_objects = f"{OUTPUT_BASE_PATH}/sce_objects/archive/01_cellranger_output/{{Species_ID}}/sce_{{individual}}-01"
     params:
         identifiers = IDENTIFIERS,
         metadata = METADATA_PATH,
         single_cell_object_metadata_fields = config["metadata"]["single_cell_object_metadata_fields"]
+    conda:
+        "envs/construct_sce_objects.yaml"
     script:
         "scripts/construct_sce_objects.R"
         
-

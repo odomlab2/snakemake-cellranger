@@ -1,9 +1,9 @@
 paths:
-  output_dir: "/omics/odcf/analysis/OE0538_projects/DO-0008/test"
+  output_dir: "/omics/odcf/analysis/OE0538_projects/DO-0008/data"
   target_templates:
     linked_files: "cellranger/linked_files/{0[Species_ID]}/{0[individual]}"
     cellranger_count: "cellranger/cellranger_count/{0[Species_ID]}/{0[individual]}/outs"
-    construct_sce_objects: "sce_objects/01_cellranger_output/{0[Species_ID]}/sce_{0[individual]}-01"
+    construct_sce_objects: "sce_objects/archive/01_cellranger_output/{0[Species_ID]}/sce_{0[individual]}-01"
   # define specific target files
   target_files:
     samples_sheet: "metadata.csv"
