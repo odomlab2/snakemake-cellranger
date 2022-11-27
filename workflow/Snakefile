@@ -41,6 +41,7 @@ rule link_files:
        directory(f"{OUTPUT_BASE_PATH}/cellranger/linked_files/{{Species_ID}}/{{individual}}")
     log:
         f"{OUTPUT_BASE_PATH}/cellranger/logs/{{Species_ID}}/link_files_{{individual}}.log"
+    threads: 1
     run:
         log_fh  = open(log[0], "w")
         os.makedirs(output[0], exist_ok=True)
@@ -57,6 +58,7 @@ rule write_samples_spreadsheet:
         f"{OUTPUT_BASE_PATH}/cellranger/{config['paths']['target_files']['samples_sheet']}"
     log:
         f"{OUTPUT_BASE_PATH}/cellranger/logs/write_samples_spreadsheet.log"
+    threads: 1
     run:
         with open(log[0], "w") as log_fh:
             print("storing samples metadata to {output[0]}", file=log_fh)
@@ -111,8 +113,9 @@ rule construct_sce_objects:
         identifiers = IDENTIFIERS,
         metadata = METADATA_PATH,
         single_cell_object_metadata_fields = config["metadata"]["single_cell_object_metadata_fields"]
-    #conda:
-    #    "envs/construct_sce_objects.yaml" # if required packages are installed this can be inactivated
+    threads: 1
+    conda:
+        "envs/construct_sce_objects.yaml" # if required packages are installed this can be inactivated
     script:
         "scripts/construct_sce_objects.R"
         
