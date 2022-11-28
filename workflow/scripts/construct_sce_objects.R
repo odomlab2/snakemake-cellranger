@@ -22,7 +22,7 @@ metadata <- read.csv(file = snakemake@params[["metadata"]],
 individual_curr <- snakemake@wildcards[["individual"]] # currently loaded individual sample 
 IDENTIFIERS <- snakemake@params[["identifiers"]] 
 
-# if necessary concatenate identifiers again to obtain all possible wildcards 
+# if necessary, concatenate identifiers again to obtain all possible wildcards 
 metadata_curr <- metadata
 if(! "individual" %in% colnames(metadata_curr)){
   metadata_curr <- metadata_curr %>%

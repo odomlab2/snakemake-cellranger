@@ -1,7 +1,7 @@
 paths:
-  output_dir: "/omics/odcf/analysis/OE0538_projects/DO-0008/test4"
+  output_dir: "/omics/odcf/analysis/OE0538_projects/DO-0008/data"
   target_templates:
-    linked_files: "cellranger/linked_files/{0[Species_ID]}/{0[individual]}"
+    linked_files: "cellranger/linked_files/{0[Species_ID]}/{0[individual]}" 
     cellranger_count: "cellranger/cellranger_count/{0[Species_ID]}/{0[individual]}/outs"
     construct_sce_objects: "sce_objects/01_cellranger_output/{0[Species_ID]}/sce_{0[individual]}-01"
   # define specific target files
@@ -23,7 +23,6 @@ metadata:
     - Age_ID
     - Fraction_ID 
     - Sample_NR
-    #- Objects_ID 
     #- PID # col name automatically included in OTP metadata sheets
     #- Sample Type # col name automatically included in OTP metadata sheets
   single_cell_object_metadata_fields:
@@ -50,7 +49,7 @@ metadata:
 # Enable / Disable rules and specifiy rule-specific parameters
 rules:
   cellranger_count:
-  #  extra: ""  # set additional arguments for cellranger count
+    extra: ""  # set additional arguments for cellranger count
   allele_specific: False
   wasp_filter_reads: False
   realign_bam: False

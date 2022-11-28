@@ -2,9 +2,6 @@ import pandas as pd
 
 from snakemake.io import Wildcards
 
-# list identifiers identically to config identifiers and in same order
-#IDENTIFIERS = ["Species_ID", "Age_ID", "Fraction_ID"] # find a way to lift directly from config
-
 class Samples:
     """
     Convert the OTP-exported metadata spreadsheet into a pandas.DataFrame
@@ -26,12 +23,7 @@ class Samples:
                "LANE_NO",
                "READ",
                "CELLRANGER_FASTQ_PATH",
-               "individual"] # include individual which is later generated
-    #print(IDENTIFIERS)
-    #print(columns)
-    #columns = columns + IDENTIFIERS 
-    #print(columns)
-    #columns = None
+               "individual"] # include 'individual' col to be generated below
                
     def __init__(self, config):
         IDENTIFIERS = config["metadata"]["identifiers"]
@@ -42,27 +34,10 @@ class Samples:
 
         metadata_full = pd.concat((pd.read_csv(f) for f in metadata_files), ignore_index=True)
 
-        """Make "individual" column
-        
-        A single identifier col is copied and renamed to "individual" but 
-        entries from multiple identifier cols are concatenated to "individual".
-        
-        Entries in the "individual" col are used as wildcards.
-        
-        For metadata_full it is used for downstream functions (?).
-        
-        This may cause a warning that I still have to take care of but that doesn't seem critical.
-        """       
+        # generate 'individual' column containing all concatenated identifiers
         if not "individual" in metadata_full.columns: 
-            print('establishing "individual" column') 
-            for i in IDENTIFIERS:
-                if i == IDENTIFIERS[0]:
-                    metadata_full["individual"] = metadata_full[i].map(str)
-                else: 
-                    metadata_full["individual"] = metadata_full["individual"] + '_' + metadata_full[i].map(str)
-      
-        metadata_full["DATE_OF_BIRTH"] = metadata_full.apply(self.rename_date_of_birth, axis=1)
-        
+            metadata_full['individual'] = metadata_full[IDENTIFIERS].apply('_'.join, axis=1)
+   
         metadata_full = self.get_cellranger_filename(metadata_full)
 
         self.metadata = self.select_columns(metadata_full, identifiers = IDENTIFIERS)
@@ -127,7 +102,7 @@ class Samples:
         :return param:
         """
 
-        _identifiers = ["individual", "Species_ID"] # possible wildcards
+        _identifiers = ["individual", "Species_ID"] 
 
         if wildcards:
             filters = dict((k, getattr(wildcards, k)) for k in _identifiers)

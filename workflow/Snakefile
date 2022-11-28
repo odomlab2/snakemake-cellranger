@@ -41,7 +41,6 @@ rule link_files:
        directory(f"{OUTPUT_BASE_PATH}/cellranger/linked_files/{{Species_ID}}/{{individual}}")
     log:
         f"{OUTPUT_BASE_PATH}/cellranger/logs/{{Species_ID}}/link_files_{{individual}}.log"
-    threads: 1
     run:
         log_fh  = open(log[0], "w")
         os.makedirs(output[0], exist_ok=True)
@@ -58,7 +57,6 @@ rule write_samples_spreadsheet:
         f"{OUTPUT_BASE_PATH}/cellranger/{config['paths']['target_files']['samples_sheet']}"
     log:
         f"{OUTPUT_BASE_PATH}/cellranger/logs/write_samples_spreadsheet.log"
-    threads: 1
     run:
         with open(log[0], "w") as log_fh:
             print("storing samples metadata to {output[0]}", file=log_fh)
@@ -77,8 +75,8 @@ rule cellranger_count:
         outs_dir=directory(f"{OUTPUT_BASE_PATH}/cellranger/cellranger_count/{{Species_ID}}/{{individual}}/outs")
     params:
         genome=REFERENCES["all_masked"],
-        output_root_dir=lambda wildcards, output: Path(output[0]).parents[1]  # remove last 2 levels from output path
-        #extra=config["rules"]["cellranger_count"]["extra"]
+        output_root_dir=lambda wildcards, output: Path(output[0]).parents[1],  # remove last 2 levels from output path
+        extra=config["rules"]["cellranger_count"]["extra"]
     log:
         f"{OUTPUT_BASE_PATH}/cellranger/logs/{{Species_ID}}/cellranger_count_{{individual}}.log"
     threads: 16
@@ -92,7 +90,7 @@ rule cellranger_count:
         "--transcriptome {params.genome} "
         "--fastqs {input} "
         "--localcores={threads} "
-        #"{params.extra} "
+        "{params.extra} "
         "--sample {wildcards.individual} "
         "> {log}"
 
@@ -113,9 +111,8 @@ rule construct_sce_objects:
         identifiers = IDENTIFIERS,
         metadata = METADATA_PATH,
         single_cell_object_metadata_fields = config["metadata"]["single_cell_object_metadata_fields"]
-    threads: 1
-    conda:
-        "envs/construct_sce_objects.yaml" # if required packages are installed this can be inactivated
+    conda: # if all required packages are installed in the snakemake environment this can be omitted
+        "envs/construct_sce_objects.yaml" # if all required packages are installed in the snakemake environment this can be omitted
     script:
         "scripts/construct_sce_objects.R"
         
