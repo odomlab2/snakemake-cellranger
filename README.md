@@ -58,3 +58,12 @@ snakemake --cluster "bsub -n16 -q verylong -R rusage[mem=200GB]" -p -j4 -c42 --c
  - `--cluster` may change depending on the computational footprint of your analyses
  - `--configfile` should point to your personal configuration
 
+For generating SCE objects, R (version as specified in construct_sce_objects.yaml) has to be installed in the snakemake environment. 
+For using the construct_sce_objects.yaml environment to resolve additional required packages automatically, also add:
+
+```bash
+--conda-frontend conda
+```
+
+to the snakemake command.
+For multiple runs, it is recommended to install these packages directly into the snakemake environment as well.
