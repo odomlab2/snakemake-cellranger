@@ -2,6 +2,7 @@
 
 library(tidyverse, quietly = TRUE) 
 library(DropletUtils, quietly = TRUE) 
+set.seed(1)
 
 # construct SCE object from raw cellranger output
 print(paste0(snakemake@input[["output_cellranger"]], "/raw_feature_bc_matrix"))

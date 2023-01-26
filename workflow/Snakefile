@@ -94,15 +94,17 @@ rule cellranger_count:
         "--sample {wildcards.individual} "
         "> {log}"
 
-# construct SCE objects from counts matrices found in ../alignment/output/
-
-"""
-# I set channel priority to strict with << conda config --set channel_priority strict >>
-# I had to use << --conda-frontend conda >> in snakemake command
-# if used more than a couple times I suggest directly installing the packages into the snakemake env
-"""
 
 rule construct_sce_objects:
+    """construct SCE objects from counts matrices
+
+    set channel priority to strict with << conda config --set channel_priority strict >>
+    use << --conda-frontend conda >> in snakemake command
+    
+    Initially, building the environment might take some time.
+    
+    Note: output must match target_templates in configuration YAML.
+    """
     input: 
         output_cellranger = rules.cellranger_count.output
     output:
@@ -111,8 +113,8 @@ rule construct_sce_objects:
         identifiers = IDENTIFIERS,
         metadata = METADATA_PATH,
         single_cell_object_metadata_fields = config["metadata"]["single_cell_object_metadata_fields"]
-    conda: # if all required packages are installed in the snakemake environment this can be omitted
-        "envs/construct_sce_objects.yaml" # if all required packages are installed in the snakemake environment this can be omitted
+    conda: 
+        "envs/construct_sce_objects.yaml" 
     script:
         "scripts/construct_sce_objects.R"
         
