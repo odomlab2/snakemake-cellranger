@@ -49,21 +49,23 @@ Minimal changes needed are:
 
 ## How to run 
 
+Use snakemake_cellranger.yaml to build an environment with all required packages.
+
+```bash
+micromamba create -f snakemake_cellranger.yaml
+```
+
+or
+
+```bash
+conda env create -f snakemake_cellranger.yaml
+```
+
 You may call the pipeline as follows in the directory where you cloned it. 
 
 ```bash
-snakemake --cluster "bsub -n16 -q verylong -R rusage[mem=200GB]" -p -j4 -c42 --configfile config/config-cluster.yaml --use-conda  --use-envmodules
+snakemake --cluster "bsub -n16 -q verylong -R rusage[mem=200GB]" -p -j4 -c42 --configfile config/config-cluster.yaml --use-conda  --use-envmodules --conda-frontend conda
 ```
 
  - `--cluster` may change depending on the computational footprint of your analyses
  - `--configfile` should point to your personal configuration
-
-For generating SCE objects, R (version as specified in construct_sce_objects.yaml) has to be installed in the snakemake environment. 
-For using the construct_sce_objects.yaml environment to resolve additional required packages automatically, also add:
-
-```bash
---conda-frontend conda
-```
-
-to the snakemake command.
-For multiple runs, it is recommended to install these packages directly into the snakemake environment as well.

@@ -6,7 +6,7 @@ from scripts.samples import Samples
 
 samples = Samples(config)
 
-METADATA_PATH = config["metadata"]["raw"]
+METADATA_PATH = config["metadata"]["table"]
 OUTPUT_BASE_PATH = config["paths"]["output_dir"]
 
 REFERENCES = config["references"]
