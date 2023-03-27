@@ -2,6 +2,7 @@ import pandas as pd
 
 from snakemake.io import Wildcards
 
+
 class Samples:
     """
     Convert the OTP-exported metadata spreadsheet into a pandas.DataFrame
@@ -23,7 +24,7 @@ class Samples:
                "LANE_NO",
                "READ",
                "CELLRANGER_FASTQ_PATH",
-               "individual"] # include 'individual' col to be generated below
+               "individual"]  # include 'individual' col to be generated below
                
     def __init__(self, config):
         IDENTIFIERS = config["metadata"]["identifiers"]
@@ -41,18 +42,6 @@ class Samples:
         metadata_full = self.get_cellranger_filename(metadata_full)
 
         self.metadata = self.select_columns(metadata_full, identifiers = IDENTIFIERS)
-
-    def rename_date_of_birth(self,
-                             row: pd.Series):
-        """Unify the 'BIRTH' and 'DATE_OF_BIRTH' columns into
-        a single 'DATE_OF_BIRTH' column.
-        """
-        values = [row["BIRTH"], row["DATE_OF_BIRTH"]]
-        dates = [val for val in values if not pd.isna(val)]
-        if len(dates) == 1:
-            return dates[0]
-        elif len(dates) != 1:
-            return pd.NA
 
     def get_cellranger_filename(self, df: pd.DataFrame) -> pd.DataFrame:
 
