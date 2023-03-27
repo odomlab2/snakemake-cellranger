@@ -49,7 +49,7 @@ Minimal changes needed are:
 
 ## How to run 
 
-Use snakemake_cellranger.yaml to build an environment with all required packages.
+Use snakemake_cellranger.yaml to create an environment with all required packages.
 
 ```bash
 micromamba create -f snakemake_cellranger.yaml
@@ -59,6 +59,12 @@ or
 
 ```bash
 conda env create -f snakemake_cellranger.yaml
+```
+
+Set channel priority to strict.
+
+```bash
+conda config --set channel_priority strict
 ```
 
 You may call the pipeline as follows in the directory where you cloned it. 

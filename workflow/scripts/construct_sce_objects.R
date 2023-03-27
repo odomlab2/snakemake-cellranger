@@ -31,7 +31,7 @@ if(! "individual" %in% colnames(metadata)){
 }
 
 # subset data as specified by wildcard and single_cell_object_metadata_fields
-metadata <- metadata[which(metadata$individual == individual_curr),]
+metadata <- metadata |> filter(individual == individual_curr)
 cols_add <- snakemake@params[["single_cell_object_metadata_fields"]]
 metadata <- metadata[,colnames(metadata) %in% cols_add]
 

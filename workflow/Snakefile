@@ -97,9 +97,6 @@ rule cellranger_count:
 
 rule construct_sce_objects:
     """construct SCE objects from counts matrices
-
-    set channel priority to strict with << conda config --set channel_priority strict >>
-    use << --conda-frontend conda >> in snakemake command
     
     Initially, building the environment might take some time.
     
@@ -113,6 +110,7 @@ rule construct_sce_objects:
         identifiers = IDENTIFIERS,
         metadata = METADATA_PATH,
         single_cell_object_metadata_fields = config["metadata"]["single_cell_object_metadata_fields"]
+    threads: 2
     conda: 
         "envs/construct_sce_objects.yaml" 
     script:
