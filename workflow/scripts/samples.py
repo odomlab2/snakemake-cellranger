@@ -41,7 +41,7 @@ class Samples:
    
         metadata_full = self.get_cellranger_filename(metadata_full)
 
-        self.metadata = self.select_columns(metadata_full, identifiers = IDENTIFIERS)
+        self.metadata = self.select_columns(metadata_full, custom_columns = IDENTIFIERS)
 
     def get_cellranger_filename(self, df: pd.DataFrame) -> pd.DataFrame:
 
