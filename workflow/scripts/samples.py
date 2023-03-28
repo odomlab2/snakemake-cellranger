@@ -2,46 +2,46 @@ import pandas as pd
 
 from snakemake.io import Wildcards
 
-
 class Samples:
     """
     Convert the OTP-exported metadata spreadsheet into a pandas.DataFrame
     that provides metadata for the workflow.
     """
-    # columns to select
-    columns = ["PID",
-               "Sample Type",
-               "Species Scientific Name",
-               "STRAIN",
-               "FastQ Path",
-               "FastQC Path",
-               "Run ID",
-               "ILSE_NO",
-               "TISSUE",
-               "BIRTH",
-               "DATE_OF_BIRTH",
-               "DATE_OF_DEATH",
-               "LANE_NO",
-               "READ",
-               "CELLRANGER_FASTQ_PATH",
-               "individual"]  # include 'individual' col to be generated below
                
     def __init__(self, config):
         IDENTIFIERS = config["metadata"]["identifiers"]
-        metadata_files = config["metadata"]["raw"]
+        metadata_files = config["metadata"]["table"]
 
         self.output_base_dir = config["paths"]["output_dir"]
         self.target_templates = config["paths"]["target_templates"]
+        
+        # columns to select for subsampling 
+        columns = ["PID",
+                   "Sample Type",
+                   "Species Scientific Name",
+                   "STRAIN",
+                   "FastQ Path",
+                   "FastQC Path",
+                   "Run ID",
+                   "ILSE_NO",
+                   "TISSUE",
+                   "BIRTH",
+                   "DATE_OF_BIRTH",
+                   "DATE_OF_DEATH",
+                   "LANE_NO",
+                   "READ",
+                   "CELLRANGER_FASTQ_PATH",
+                   "individual"]  # include 'individual' col to be generated below
 
         metadata_full = pd.concat((pd.read_csv(f) for f in metadata_files), ignore_index=True)
 
-        # generate 'individual' column containing all concatenated identifiers
+        # if required, generate 'individual' column containing all concatenated identifiers
         if not "individual" in metadata_full.columns: 
             metadata_full['individual'] = metadata_full[IDENTIFIERS].apply('_'.join, axis=1)
    
         metadata_full = self.get_cellranger_filename(metadata_full)
 
-        self.metadata = self.select_columns(metadata_full, custom_columns = IDENTIFIERS)
+        self.metadata = self.select_columns(metadata_full, custom_columns = columns + IDENTIFIERS)
 
     def get_cellranger_filename(self, df: pd.DataFrame) -> pd.DataFrame:
 
@@ -69,14 +69,18 @@ class Samples:
 
     def select_columns(self,
                        df: pd.DataFrame,
-                       columns: list = None,
-                       identifiers: str = None):
+                       custom_columns: list = None):
         """Select/Subset columns from DataFrame to reduce
-        DataFrame dimensions. """
-
-        if not columns:
-            columns = self.columns + identifiers
-        return df[columns]
+        DataFrame dimensions. A list of column names can be provided by `custom_columns` """
+        
+        if custom_columns:
+          print(custom_columns)
+          df_subset = df[custom_columns] 
+        else:
+          print(custom_columns)
+          df_subset = df[columns]
+        
+        return df_subset
             
     @staticmethod
     def filter_by_wildcards(

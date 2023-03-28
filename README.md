@@ -70,7 +70,7 @@ conda config --set channel_priority strict
 You may call the pipeline as follows in the directory where you cloned it. 
 
 ```bash
-snakemake --cluster "bsub -n16 -q verylong -R rusage[mem=200GB]" -p -j4 -c42 --configfile config/config-cluster.yaml --use-conda  --use-envmodules --conda-frontend conda
+snakemake --cluster "bsub -n16 -q verylong -R rusage[mem=200GB]" -p -j4 -c42 --configfile config/config-cluster.yaml --use-conda --use-envmodules --conda-frontend conda
 ```
 
  - `--cluster` may change depending on the computational footprint of your analyses
