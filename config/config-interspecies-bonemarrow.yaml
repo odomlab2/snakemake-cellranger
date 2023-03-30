@@ -1,7 +1,7 @@
 paths:
   # directory to store output data = cellranger files and SingleCellExperiment objects
   # paths to input data = fastq files are stored in metadata sheet (OTP export)
-  output_dir: "/omics/odcf/analysis/OE0538_projects/DO-0008/test2"
+  output_dir: "/omics/odcf/analysis/OE0538_projects/DO-0008/data"
   target_templates:
     # paths for each type of output file
       # remove "/{0[Species_ID]}" to store all objects in one directory or
