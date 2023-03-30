@@ -2,83 +2,65 @@ import pandas as pd
 
 from snakemake.io import Wildcards
 
-
 class Samples:
     """
     Convert the OTP-exported metadata spreadsheet into a pandas.DataFrame
     that provides metadata for the workflow.
-
-
     """
-    # columns to select
-    columns = ["PID",
-               "Sample Type",
-               "Species Scientific Name",
-               "STRAIN",
-               "FastQ Path",
-               "FastQC Path",
-               "Run ID",
-               "ILSE_NO",
-               "TISSUE",
-               "BIRTH",
-               "DATE_OF_BIRTH",
-               "DATE_OF_DEATH",
-               "LANE_NO",
-               "READ",
-               "CELLRANGER_FASTQ_PATH"]
-
-    # map to rename columns in the format of (old):(new)
-    columns_map = {
-        "PID": "individual",
-        "Sample Type": "sample_type",
-    }
-
+               
     def __init__(self, config):
-        metadata_files = config["metadata"]["raw"]
+        IDENTIFIERS = config["metadata"]["identifiers"]
+        metadata_files = config["metadata"]["table"]
 
         self.output_base_dir = config["paths"]["output_dir"]
         self.target_templates = config["paths"]["target_templates"]
+        
+        # columns to select for subsampling 
+        columns = ["PID",
+                   "Sample Type",
+                   "Species Scientific Name",
+                   "STRAIN",
+                   "FastQ Path",
+                   "FastQC Path",
+                   "Run ID",
+                   "ILSE_NO",
+                   "TISSUE",
+                   "BIRTH",
+                   "DATE_OF_BIRTH",
+                   "DATE_OF_DEATH",
+                   "LANE_NO",
+                   "READ",
+                   "CELLRANGER_FASTQ_PATH",
+                   "individual"]  # include 'individual' col to be generated below
 
         metadata_full = pd.concat((pd.read_csv(f) for f in metadata_files), ignore_index=True)
 
-        metadata_full["DATE_OF_BIRTH"] = metadata_full.apply(self.rename_date_of_birth, axis=1)
-
+        # if required, generate 'individual' column containing all concatenated identifiers
+        if not "individual" in metadata_full.columns: 
+            metadata_full['individual'] = metadata_full[IDENTIFIERS].apply('_'.join, axis=1)
+   
         metadata_full = self.get_cellranger_filename(metadata_full)
 
-        self.metadata = self.select_columns(metadata_full)
-        self.metadata = self.metadata.rename(self.columns_map, axis="columns")
-
-    def rename_date_of_birth(self,
-                             row: pd.Series):
-        """Unify the 'BIRTH' and 'DATE_OF_BIRTH' columns into
-        a single 'DATE_OF_BIRTH' column.
-        """
-        values = [row["BIRTH"], row["DATE_OF_BIRTH"]]
-        dates = [val for val in values if not pd.isna(val)]
-        if len(dates) == 1:
-            return dates[0]
-        elif len(dates) != 1:
-            return pd.NA
+        self.metadata = self.select_columns(metadata_full, custom_columns = columns + IDENTIFIERS)
 
     def get_cellranger_filename(self, df: pd.DataFrame) -> pd.DataFrame:
 
         """Add column containing CellRanger compatible filename,
         i.e. in the format of
-
         [Sample Name]_S[Sample_Number]_L00[Lane Number]_[Read Type]_001.fastq.gz
-
-        Here, [Sample Name] consists of PID and Sample Type.
-
+        
+        Here, [Sample Name] consists of "individual".
+        
         See also: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/fastq-input
         """
 
-        grouped = df.groupby(["PID", "Sample Type", "LANE_NO", "READ"])
+        grouped = df.groupby(["individual", "LANE_NO", "READ"])
         groups = []
         for name, group in grouped:
             group = group.sort_values("FastQ Path")  # import to have consistent sorting
             group["multi_sample_idx"] = range(1, len(group)+1)
             group["CELLRANGER_FASTQ_PATH"] = group.agg(
-                "{0[PID]}_{0[Sample Type]}_S{0[multi_sample_idx]}_L00{0[LANE_NO]}_R{0[READ]}_001.fastq.gz".format,
+                "{0[individual]}_S{0[multi_sample_idx]}_L00{0[LANE_NO]}_R{0[READ]}_001.fastq.gz".format,
                 axis=1,
             )
             groups.append(group)
@@ -87,13 +69,19 @@ class Samples:
 
     def select_columns(self,
                        df: pd.DataFrame,
-                       columns: list = None):
+                       custom_columns: list = None):
         """Select/Subset columns from DataFrame to reduce
-        DataFrame dimensions. """
-        if not columns:
-            columns = self.columns
-        return df[columns]
-
+        DataFrame dimensions. A list of column names can be provided by `custom_columns` """
+        
+        if custom_columns:
+          print(custom_columns)
+          df_subset = df[custom_columns] 
+        else:
+          print(custom_columns)
+          df_subset = df[columns]
+        
+        return df_subset
+            
     @staticmethod
     def filter_by_wildcards(
             wildcards: Wildcards,
@@ -104,11 +92,10 @@ class Samples:
     ) -> list:
         """Get item from DataFrame by subsetting using the following index
         attributes provided via Snakemakes wildcards object.
-
         :return param:
         """
 
-        _identifiers = ["individual", "sample_type"]
+        _identifiers = ["individual", "Species_ID"] 
 
         if wildcards:
             filters = dict((k, getattr(wildcards, k)) for k in _identifiers)
@@ -138,7 +125,7 @@ class Samples:
 
         targets = list(map(lambda x: self.metadata.agg(x.format, axis=1).drop_duplicates().to_list(), target_templates.values()))
         return targets
-
-
-
+      
+      
+      
 #grouped = metadata_subset.groupby(["PID", "Sample Type"])["FastQ Path"].apply(list)

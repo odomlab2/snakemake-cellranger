@@ -49,12 +49,29 @@ Minimal changes needed are:
 
 ## How to run 
 
+Use snakemake_cellranger.yaml to create an environment with all required packages.
+
+```bash
+micromamba create -f snakemake_cellranger.yaml
+```
+
+or
+
+```bash
+conda env create -f snakemake_cellranger.yaml
+```
+
+Set channel priority to strict.
+
+```bash
+conda config --set channel_priority strict
+```
+
 You may call the pipeline as follows in the directory where you cloned it. 
 
 ```bash
-snakemake --cluster "bsub -n16 -q verylong -R rusage[mem=200GB]" -p -j4 -c42 --configfile config/config-cluster.yaml --use-conda  --use-envmodules
+snakemake --cluster "bsub -n16 -q verylong -R rusage[mem=200GB]" -p -j4 -c42 --configfile config/config-cluster.yaml --use-conda --use-envmodules --conda-frontend conda
 ```
 
  - `--cluster` may change depending on the computational footprint of your analyses
  - `--configfile` should point to your personal configuration
-

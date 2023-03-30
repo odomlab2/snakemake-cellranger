@@ -1,0 +1,58 @@
+paths:
+  # directory to store output data = cellranger files and SingleCellExperiment objects
+  # paths to input data = fastq files are stored in metadata sheet (OTP export)
+  output_dir: "/omics/odcf/analysis/OE0538_projects/DO-0008/data"
+  target_templates:
+    # paths for each type of output file
+      # remove "/{0[Species_ID]}" to store all objects in one directory or
+      # replace "Species_ID" with other colname as suitable wildcard from metadata sheet (e.g. Sample_Type, ...) to create subfolders
+      # remove or replace all instances of Species_ID in Snakefile and samples.py 
+    linked_files: "cellranger/linked_files/{0[Species_ID]}/{0[individual]}" 
+    cellranger_count: "cellranger/cellranger_count/{0[Species_ID]}/{0[individual]}/outs"
+    construct_sce_objects: "sce_objects/01_cellranger_output/{0[Species_ID]}/sce_{0[individual]}-01"
+  # define specific target files
+  target_files:
+    samples_sheet: "metadata.csv"
+references:
+  all_masked: "/omics/groups/OE0538/internal/shared_data/CellRangerReferences/GRCm38_masked_allStrains/"
+metadata:
+  table:
+  # should have same format as or be based on OTP export sheet
+   - "/omics/odcf/analysis/OE0538_projects/DO-0008/metadata/OE0538_DO-0008_metadata_combined.csv"
+  identifiers: 
+  # define one or multiple column name(s) that uniquely define a sample/object 
+  # multiple cols are concatenated into one sample-specific name
+  # in the format of {Species_ID}_{Age_ID}_{Fraction_ID}_{Sample_NR}
+    - Species_ID # columns I manually added to metadata sheet 
+    - Age_ID
+    - Fraction_ID 
+    - Sample_NR
+    #- PID # columns included in OTP metadata sheet
+    #- Sample_Type 
+  single_cell_object_metadata_fields:
+  # Define all columns from the metadata spreadsheet that
+  # will be included in the SingleCellExperiment / Seurat objects
+      - Object_ID # columns I manually added to metadata sheet
+      - Mouse_ID
+      - Species_ID
+      - Age
+      - Age_ID
+      - Age_weeks
+      - Fraction
+      - Fraction_ID
+      - Antibody_combination
+      - Sample_NR
+      - Extrarun
+      - Batch_exp_day
+      - Batch_sequencing
+      - Date_collected
+      - Keep_sample
+      - individual
+      - PID
+# Enable / Disable rules and specifiy rule-specific parameters
+rules:
+  cellranger_count:
+    extra: ""  # set additional arguments for cellranger count
+  allele_specific: False
+  wasp_filter_reads: False
+  realign_bam: False
